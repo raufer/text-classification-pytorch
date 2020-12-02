@@ -1,6 +1,8 @@
 import logging
 import torch
 
+from src import device
+
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +26,8 @@ def pretrain(model, optimizer, train_iter, valid_iter, loss_function, scheduler=
 
         for batch in train_iter:
 
+            batch = {k: v.to(device) for k, v in batch.items()}
+
             target = batch.pop('target')
 
             y_pred = model(**batch)
@@ -46,6 +50,9 @@ def pretrain(model, optimizer, train_iter, valid_iter, loss_function, scheduler=
                 with torch.no_grad():
 
                     for batch in valid_iter:
+
+                        batch = {k: v.to(device) for k, v in batch.items()}
+
                         target = batch.pop('target')
 
                         y_pred = model(**batch)

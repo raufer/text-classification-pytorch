@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from typing import List
 from typing import Tuple
 
-from transformers import PreTrainedTokenizer
+from src import device
 
 
 def evaluate(model, test_iter: DataLoader) -> Tuple[List, List]:
@@ -24,6 +24,8 @@ def evaluate(model, test_iter: DataLoader) -> Tuple[List, List]:
     with torch.no_grad():
 
         for batch in test_iter:
+
+            batch = {k: v.to(device) for k, v in batch.items()}
 
             target = batch.pop('target')
 

@@ -4,6 +4,8 @@ import torch
 from src.utils.checkpoints import save_checkpoint
 from src.utils.metrics import save_metrics
 
+from src import device
+
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +28,8 @@ def train(model, optimizer, train_iter, valid_iter, valid_period, output_path, l
     for epoch in range(num_epochs):
 
         for batch in train_iter:
+
+            batch = {k: v.to(device) for k, v in batch.items()}
 
             target = batch.pop('target')
             y_pred = model(**batch)
@@ -51,6 +55,8 @@ def train(model, optimizer, train_iter, valid_iter, valid_period, output_path, l
 
                     for batch in valid_iter:
 
+                        batch = {k: v.to(device) for k, v in batch.items()}
+
                         target = batch.pop('target')
                         y_pred = model(**batch)
 
@@ -68,7 +74,7 @@ def train(model, optimizer, train_iter, valid_iter, valid_period, output_path, l
                       .format(epoch + 1, num_epochs, global_step, num_epochs * len(train_iter),
                               train_loss, valid_loss))
 
-                if best_valid_loss > valid_loss:
+                if best_valid_loss >= valid_loss:
                     best_valid_loss = valid_loss
                     save_checkpoint(output_path + '/model.pkl', model, best_valid_loss)
                     save_metrics(output_path + '/metric.pkl', train_loss_list, valid_loss_list, global_steps_list)
