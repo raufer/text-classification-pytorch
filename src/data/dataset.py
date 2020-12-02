@@ -21,7 +21,7 @@ def create_datasets(tokenizer: PreTrainedTokenizer, filepath: str, split_ratios:
     Each record contains two fields: 'data', 'label'
     split_ratio :: [train, val, test]
     """
-    logger.info(f"Creating a dataset from file in '{filepath}'; format '{format}'")
+    logger.info(f"Creating a dataset from file in '{filepath}'")
     df = pd.read_csv(filepath)
 
     train, val, test = stratified_split(df, 'label', split_ratios)

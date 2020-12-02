@@ -11,7 +11,6 @@ class ROBERTAClassifier(torch.nn.Module):
 
     def __init__(self, dropout_rate=0.3, n_outputs=2):
         super(ROBERTAClassifier, self).__init__()
-        print('DROPOUT RATE', type(dropout_rate), dropout_rate)
 
         self.pretrained_model = RobertaModel.from_pretrained('roberta-base')
         self.d1 = torch.nn.Dropout(dropout_rate)
