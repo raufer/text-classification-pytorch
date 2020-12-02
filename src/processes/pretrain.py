@@ -1,8 +1,6 @@
 import logging
 import torch
 
-from src.text.tokenizer import PAD_INDEX
-
 
 logger = logging.getLogger(__name__)
 
@@ -11,10 +9,9 @@ def pretrain(model, optimizer, train_iter, valid_iter, loss_function, scheduler=
     """
     Pretrains Linear Layers (does not train the pre-trained model)
     """
-
     logger.info(f"Starting 'pretrain' phase")
 
-    for param in model.roberta.parameters():
+    for param in model.pretrained_model.parameters():
         param.requires_grad = False
 
     model.train()
@@ -25,11 +22,11 @@ def pretrain(model, optimizer, train_iter, valid_iter, loss_function, scheduler=
 
     for epoch in range(num_epochs):
 
-        for (source, target), _ in train_iter:
+        for batch in train_iter:
 
-            mask = (source != PAD_INDEX).type(torch.uint8)
+            target = batch.pop('target')
 
-            y_pred = model(input_ids=source, attention_mask=mask)
+            y_pred = model(**batch)
 
             loss = loss_function(y_pred, target)
             loss.backward()
@@ -48,10 +45,10 @@ def pretrain(model, optimizer, train_iter, valid_iter, loss_function, scheduler=
 
                 with torch.no_grad():
 
-                    for (source, target), _ in valid_iter:
-                        mask = (source != PAD_INDEX).type(torch.uint8)
+                    for batch in valid_iter:
+                        target = batch.pop('target')
 
-                        y_pred = model(input_ids=source, attention_mask=mask)
+                        y_pred = model(**batch)
                         loss = loss_function(y_pred, target)
 
                         valid_loss += loss.item()
@@ -68,7 +65,7 @@ def pretrain(model, optimizer, train_iter, valid_iter, loss_function, scheduler=
                 train_loss = 0.0
                 valid_loss = 0.0
 
-    for param in model.roberta.parameters():
+    for param in model.pretrained_model.parameters():
         param.requires_grad = True
 
     logger.info('Pre-training done!')

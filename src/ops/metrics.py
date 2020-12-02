@@ -29,6 +29,8 @@ def write_confusion_matrix(y_true: List, y_pred: List, output_path: str) -> None
     cm = confusion_matrix(y_true, y_pred, labels=[1, 0])
 
     ax = plt.subplot()
+    ax.get_legend().remove()
+
     sns.heatmap(cm, annot=True, ax=ax, cmap='Blues', fmt="d")
     ax.set_title('Confusion Matrix')
 

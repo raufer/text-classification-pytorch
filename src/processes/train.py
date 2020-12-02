@@ -3,7 +3,6 @@ import torch
 
 from src.utils.checkpoints import save_checkpoint
 from src.utils.metrics import save_metrics
-from src.text.tokenizer import PAD_INDEX
 
 
 logger = logging.getLogger(__name__)
@@ -13,7 +12,6 @@ def train(model, optimizer, train_iter, valid_iter, valid_period, output_path, l
     """
     Training phase
     """
-
     train_loss = 0.0
     valid_loss = 0.0
     train_loss_list = []
@@ -26,11 +24,11 @@ def train(model, optimizer, train_iter, valid_iter, valid_period, output_path, l
     model.train()
 
     for epoch in range(num_epochs):
-        for (source, target), _ in train_iter:
 
-            mask = (source != PAD_INDEX).type(torch.uint8)
+        for batch in train_iter:
 
-            y_pred = model(input_ids=source, attention_mask=mask)
+            target = batch.pop('target')
+            y_pred = model(**batch)
 
             loss = loss_function(y_pred, target)
 
@@ -50,10 +48,11 @@ def train(model, optimizer, train_iter, valid_iter, valid_period, output_path, l
                 model.eval()
 
                 with torch.no_grad():
-                    for (source, target), _ in valid_iter:
-                        mask = (source != PAD_INDEX).type(torch.uint8)
 
-                        y_pred = model(input_ids=source, attention_mask=mask)
+                    for batch in valid_iter:
+
+                        target = batch.pop('target')
+                        y_pred = model(**batch)
 
                         loss = loss_function(y_pred, target)
 

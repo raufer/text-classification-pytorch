@@ -1,5 +1,7 @@
 import os
 
+import numpy as np
+
 import torch
 import logging
 import warnings
@@ -17,7 +19,8 @@ logging.basicConfig(
 
 ROOT = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 
-torch.manual_seed(2)
+torch.manual_seed(4)
+# np.random.seed(2)
 
 if torch.cuda.is_available():
     device = torch.device('cuda:0')
