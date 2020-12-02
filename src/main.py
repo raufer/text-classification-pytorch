@@ -117,9 +117,6 @@ if __name__ == '__main__':
 
     weights = calculate_multiclass_weights(df['label'])
 
-    config['num-epochs-pretrain'] = 3
-    config['num-epochs-train'] = 3
-
     training_job(
         config=config,
         model=model,
