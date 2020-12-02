@@ -70,7 +70,7 @@ def training_job(config: Dict, model: torch.nn.Module, train_iter: DataLoader, v
         optimizer=optimizer,
         scheduler=scheduler,
         loss_function=loss_function,
-        valid_period=len(train_iter),
+        valid_period=len(train_iter)/3,
         num_epochs=n_epochs,
         output_path=output_path
     )
