@@ -16,3 +16,6 @@ if __name__ == '__main__':
     print(tokenizer.sep_token)
     print(tokenizer.sep_token_id)
 
+    print(tokenizer('Subject to regulation 7, a limited company')['input_ids'])
+    print(tokenizer('( a ) Subject to regulation 7 , a limited company')['input_ids'])
+

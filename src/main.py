@@ -6,7 +6,6 @@ from torch.utils.data import DataLoader
 
 from src import device
 from src.io.model import load_model
-from src.models.roberta_classifier import ROBERTAClassifier
 from src.ops.evaluation import evaluate
 from src.ops.loss import cross_entropy_loss
 from src.ops.metrics import classification_report, write_confusion_matrix
@@ -14,6 +13,10 @@ from src.processes.pretrain import pretrain
 from src.processes.train import train
 from src.utils.directories import make_run_dir
 from src.viz.metrics import write_train_valid_loss
+
+from src.ops.weights import calculate_multiclass_weights
+from src.data.dataset import create_datasets
+from src.data.iterator import make_iterators
 
 from transformers import AdamW
 from transformers import get_linear_schedule_with_warmup
@@ -83,7 +86,52 @@ def training_job(config: Dict, model: torch.nn.Module,train_iter: DataLoader, va
 
 
 if __name__ == '__main__':
-    ...
+
+    import pandas as pd
+
+    from src.config import config
+    from src.arguments import args
+
+    from src.models import make_model
+    from src.tokenizer import create_tokenizer
+
+    datapath = args.data_path
+    output_dir = args.output_dir
+    modelname = args.model
+
+    for arg, value in sorted(vars(args).items()):
+        logging.info(f"Argument {arg}: '{value}'")
+
+    df = pd.read_csv(datapath)
+    n_outputs = df['label'].nunique()
+
+    raise ValueError
+
+    model = make_model(modelname)(
+        dropout_rate=config['dropout-ratio'],
+        n_outputs=n_outputs
+    )
+
+    tokenizer = create_tokenizer(modelname)
+
+    split_ratios = [0.7, 0.2, 0.1]
+    train, val, test = create_datasets(tokenizer=tokenizer, filepath=datapath, split_ratios=split_ratios)
+    train_iter, valid_iter, test_iter = make_iterators(train, val, test)
+
+    weights = calculate_multiclass_weights(df['label'])
+
+    config['num-epochs-pretrain'] = 3
+    config['num-epochs-train'] = 3
+
+    training_job(
+        config=config,
+        model=model,
+        train_iter=train_iter,
+        valid_iter=valid_iter,
+        test_iter=test_iter,
+        output_dir=output_dir,
+        weights=weights
+    )
 
 
 
