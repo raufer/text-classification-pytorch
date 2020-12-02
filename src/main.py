@@ -5,7 +5,6 @@ import logging
 from torch.utils.data import DataLoader
 
 from src import device
-from src.io.model import load_model
 from src.ops.evaluation import evaluate
 from src.ops.loss import cross_entropy_loss
 from src.ops.metrics import classification_report, write_confusion_matrix
@@ -28,7 +27,7 @@ from typing import List
 logger = logging.getLogger(__name__)
 
 
-def training_job(config: Dict, model: torch.nn.Module,train_iter: DataLoader, valid_iter: DataLoader, test_iter: DataLoader, output_dir: str, weights: List = None):
+def training_job(config: Dict, model: torch.nn.Module, train_iter: DataLoader, valid_iter: DataLoader, test_iter: DataLoader, output_dir: str, weights: List = None):
     """
     Main training loop
     """
@@ -105,18 +104,18 @@ if __name__ == '__main__':
     df = pd.read_csv(datapath)
     n_outputs = df['label'].nunique()
 
-    raise ValueError
+    tokenizer = create_tokenizer(modelname)
 
     model = make_model(modelname)(
         dropout_rate=config['dropout-ratio'],
         n_outputs=n_outputs
     )
 
-    tokenizer = create_tokenizer(modelname)
+    logger.info(tokenizer)
 
     split_ratios = [0.7, 0.2, 0.1]
-    train, val, test = create_datasets(tokenizer=tokenizer, filepath=datapath, split_ratios=split_ratios)
-    train_iter, valid_iter, test_iter = make_iterators(train, val, test)
+    train_dataset, val_dataset, test_dataset = create_datasets(tokenizer=tokenizer, filepath=datapath, split_ratios=split_ratios)
+    train_iter, valid_iter, test_iter = make_iterators(train_dataset, val_dataset, test_dataset)
 
     weights = calculate_multiclass_weights(df['label'])
 

@@ -28,9 +28,9 @@ class TestFunctionalClassification(unittest.TestCase):
         df = pd.read_csv(datapath)
 
         tokenizer = make_roberta_tokenizer()
+        model = ROBERTAClassifier(dropout_rate=config['dropout-ratio'], n_outputs=2)
 
         split_ratios = [0.7, 0.2, 0.1]
-
         train, val, test = create_datasets(tokenizer=tokenizer, filepath=datapath, split_ratios=split_ratios)
         train_iter, valid_iter, test_iter = make_iterators(train, val, test)
 
@@ -38,8 +38,6 @@ class TestFunctionalClassification(unittest.TestCase):
 
         config['num-epochs-pretrain'] = 3
         config['num-epochs-train'] = 3
-
-        model = ROBERTAClassifier(dropout_rate=config['dropout-ratio'])
 
         training_job(
             config=config,
@@ -93,7 +91,6 @@ class TestFunctionalClassification(unittest.TestCase):
         tokenizer = make_legalbert_tokenizer()
 
         split_ratios = [0.7, 0.2, 0.1]
-
         train, val, test = create_datasets(tokenizer=tokenizer, filepath=datapath, split_ratios=split_ratios)
         train_iter, valid_iter, test_iter = make_iterators(train, val, test)
 

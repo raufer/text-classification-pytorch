@@ -11,6 +11,7 @@ class ROBERTAClassifier(torch.nn.Module):
 
     def __init__(self, dropout_rate=0.3, n_outputs=2):
         super(ROBERTAClassifier, self).__init__()
+        print('DROPOUT RATE', type(dropout_rate), dropout_rate)
 
         self.pretrained_model = RobertaModel.from_pretrained('roberta-base')
         self.d1 = torch.nn.Dropout(dropout_rate)
@@ -19,8 +20,8 @@ class ROBERTAClassifier(torch.nn.Module):
         self.d2 = torch.nn.Dropout(dropout_rate)
         self.l2 = torch.nn.Linear(64, n_outputs)
 
-    def forward(self, input_ids, attention_mask):
-        _, x = self.pretrained_model(input_ids=input_ids, attention_mask=attention_mask)
+    def forward(self, *args, **kwargs):
+        _, x = self.pretrained_model(*args, **kwargs)
         x = self.d1(x)
         x = self.l1(x)
         x = self.bn1(x)
