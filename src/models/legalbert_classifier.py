@@ -35,7 +35,6 @@ class LegalBertClassifier(torch.nn.Module):
         print('DROPOUT', dropout_rate)
 
     def forward(self, *args, **kwargs):
-        print('KEEEYS', kwargs.keys())
         _, x = self.pretrained_model(*args, **kwargs)
         x = self.d1(x)
         x = self.l1(x)
