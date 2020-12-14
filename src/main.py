@@ -5,6 +5,7 @@ import logging
 from torch.utils.data import DataLoader
 
 from src import device
+from src.io.model import load_model
 from src.ops.evaluation import evaluate
 from src.ops.loss import cross_entropy_loss
 from src.ops.metrics import classification_report, write_confusion_matrix
@@ -27,15 +28,13 @@ from typing import List
 logger = logging.getLogger(__name__)
 
 
-def training_job(config: Dict, model: torch.nn.Module, train_iter: DataLoader, valid_iter: DataLoader, test_iter: DataLoader, output_dir: str, weights: List = None):
+def training_job(config: Dict, model: torch.nn.Module, train_iter: DataLoader, valid_iter: DataLoader, test_iter: DataLoader, output_path: str, weights: List = None):
     """
     Main training loop
     """
     logger.info(f"Text Classification Training Pipeline")
     logger.info("Configuration")
     logger.info(json.dumps(config, indent=4))
-
-    output_path = make_run_dir(output_dir)
 
     model = model.to(device)
 
@@ -79,11 +78,7 @@ def training_job(config: Dict, model: torch.nn.Module, train_iter: DataLoader, v
 
     write_train_valid_loss(output_path)
 
-    # model = load_model(output_path)
-    y_true, y_pred = evaluate(model, test_iter)
-
-    classification_report(y_true, y_pred)
-    write_confusion_matrix(y_true, y_pred, output_path)
+    return output_path
 
 
 if __name__ == '__main__':
@@ -119,15 +114,28 @@ if __name__ == '__main__':
 
     weights = calculate_multiclass_weights(df['label'])
 
+    output_path = make_run_dir(output_dir)
+
     training_job(
         config=config,
         model=model,
         train_iter=train_iter,
         valid_iter=valid_iter,
         test_iter=test_iter,
-        output_dir=output_dir,
+        output_path=output_path,
         weights=weights
     )
+
+    model = make_model(modelname)(
+        dropout_rate=config['dropout-ratio'],
+        n_outputs=n_outputs
+    )
+
+    model = load_model(model, output_path)
+    y_true, y_pred = evaluate(model, test_iter)
+
+    classification_report(y_true, y_pred)
+    write_confusion_matrix(y_true, y_pred, output_path)
 
 
 
