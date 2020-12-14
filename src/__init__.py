@@ -31,7 +31,7 @@ logging.getLogger().addHandler(console)
 ROOT = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 
 torch.manual_seed(4)
-# np.random.seed(2)
+np.random.seed(2)
 
 if torch.cuda.is_available():
     device = torch.device('cuda:0')
