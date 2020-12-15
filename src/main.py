@@ -1,3 +1,4 @@
+import os
 import torch
 import json
 import logging
@@ -61,7 +62,7 @@ def training_job(config: Dict, model: torch.nn.Module, train_iter: DataLoader, v
     lr = config['learning-rate-train']
     n_epochs = config['num-epochs-train']
     optimizer = AdamW(model.parameters(), lr=lr)
-    scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=steps_per_epoch * 2, num_training_steps=steps_per_epoch * n_epochs)
+    scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=steps_per_epoch * 3, num_training_steps=steps_per_epoch * n_epochs)
     validation_period = len(train_iter) // 3
     logger.info(f"Validation period: every '{validation_period}' batches")
     train(
@@ -108,13 +109,20 @@ if __name__ == '__main__':
         n_outputs=n_outputs
     )
 
+    output_path = make_run_dir(output_dir)
+
     split_ratios = [0.7, 0.2, 0.1]
     train_dataset, val_dataset, test_dataset = create_datasets(tokenizer=tokenizer, filepath=datapath, split_ratios=split_ratios)
+
+    logger.info(f"Saving datasets to '{output_path}'")
+
+    torch.save(train_dataset, os.path.join(output_path, 'train_dataset.pt'))
+    torch.save(val_dataset, os.path.join(output_path, 'val_dataset.pt'))
+    torch.save(test_dataset, os.path.join(output_path, 'test_dataset.pt'))
+
     train_iter, valid_iter, test_iter = make_iterators(train_dataset, val_dataset, test_dataset)
 
     weights = calculate_multiclass_weights(df['label'])
-
-    output_path = make_run_dir(output_dir)
 
     training_job(
         config=config,
