@@ -18,7 +18,7 @@ def stratified_split(df: DataFrame, target_col: str, split_ratios: List[float]) 
 
     columns = [col for col in df.columns if col != target_col]
 
-    X, y = df[columns], df['label']
+    X, y = df[columns], df[target_col]
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_size, stratify=y, random_state=11)
 
     test_size_renormalized = test_size / (test_size + val_size)

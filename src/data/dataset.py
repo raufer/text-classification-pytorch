@@ -15,7 +15,7 @@ from src.ops.sample import stratified_split
 logger = logging.getLogger(__name__)
 
 
-def create_datasets(tokenizer: PreTrainedTokenizer, filepath: str, split_ratios: List[float]) -> Tuple[TextDataset, TextDataset, TextDataset]:
+def create_datasets(tokenizer: PreTrainedTokenizer, filepath: str, split_ratios: List[float], stratify_by: str = 'label') -> Tuple[TextDataset, TextDataset, TextDataset]:
     """
     Creates a dataset from the file `filepath`
     Each record contains two fields: 'data', 'label'
@@ -24,7 +24,7 @@ def create_datasets(tokenizer: PreTrainedTokenizer, filepath: str, split_ratios:
     logger.info(f"Creating a dataset from file in '{filepath}'")
     df = pd.read_csv(filepath)
 
-    train, val, test = stratified_split(df, 'label', split_ratios)
+    train, val, test = stratified_split(df, stratify_by, split_ratios)
 
     dataset_train = TextDataset(train, tokenizer)
     dataset_val = TextDataset(val, tokenizer)

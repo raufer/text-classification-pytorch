@@ -112,7 +112,7 @@ if __name__ == '__main__':
     output_path = make_run_dir(output_dir)
 
     split_ratios = [0.7, 0.2, 0.1]
-    train_dataset, val_dataset, test_dataset = create_datasets(tokenizer=tokenizer, filepath=datapath, split_ratios=split_ratios)
+    train_dataset, val_dataset, test_dataset = create_datasets(tokenizer=tokenizer, filepath=datapath, split_ratios=split_ratios, stratify_by='class')
 
     logger.info(f"Saving datasets to '{output_path}'")
 
