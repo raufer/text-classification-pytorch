@@ -62,7 +62,7 @@ def training_job(config: Dict, model: torch.nn.Module, train_iter: DataLoader, v
     lr = config['learning-rate-train']
     n_epochs = config['num-epochs-train']
     optimizer = AdamW(model.parameters(), lr=lr)
-    scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=steps_per_epoch * 3, num_training_steps=steps_per_epoch * n_epochs)
+    scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=steps_per_epoch * 1, num_training_steps=steps_per_epoch * n_epochs)
     validation_period = len(train_iter) // 3
     logger.info(f"Validation period: every '{validation_period}' batches")
     train(
