@@ -6,6 +6,7 @@ import seaborn as sns
 
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report as sk_classification_report
+from sklearn.metrics import f1_score
 
 from typing import List
 
@@ -20,6 +21,17 @@ def classification_report(y_true: List, y_pred: List) -> None:
     report = sk_classification_report(y_true, y_pred, digits=4)
     logger.info("Classification Report")
     logger.info(report)
+
+
+def weighted_f1_score(y_true: List, y_pred: List) -> float:
+    """
+    Calculate metrics for each label, and find their average weighted by support
+    (the number of true instances for each label).
+    This alters ‘macro’ to account for label imbalance;
+    it can result in an F-score that is not between precision and recall.
+    """
+    score = f1_score(y_true, y_pred, average='weighted')
+    return score
 
 
 def write_confusion_matrix(y_true: List, y_pred: List, output_path: str) -> None:

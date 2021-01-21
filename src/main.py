@@ -145,6 +145,8 @@ if __name__ == '__main__':
     classification_report(y_true, y_pred)
     write_confusion_matrix(y_true, y_pred, output_path)
 
+    f1_score(y_true, y_pred, average='weighted')
+
 
 
 
