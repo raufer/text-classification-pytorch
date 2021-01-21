@@ -45,7 +45,7 @@ class TestFunctionalClassification(unittest.TestCase):
             train_iter=train_iter,
             valid_iter=valid_iter,
             test_iter=test_iter,
-            output_dir=output_dir,
+            output_path=output_dir,
             weights=weights
         )
 
@@ -76,7 +76,7 @@ class TestFunctionalClassification(unittest.TestCase):
             train_iter=train_iter,
             valid_iter=valid_iter,
             test_iter=test_iter,
-            output_dir=output_dir,
+            output_path=output_dir,
             weights=weights
         )
 
@@ -107,7 +107,7 @@ class TestFunctionalClassification(unittest.TestCase):
             train_iter=train_iter,
             valid_iter=valid_iter,
             test_iter=test_iter,
-            output_dir=output_dir,
+            output_path=output_dir,
             weights=weights
         )
 

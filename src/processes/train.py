@@ -81,6 +81,7 @@ def train(model, optimizer, train_iter, valid_iter, valid_period, output_path, l
 
                 train_loss = 0.0
                 valid_loss = 0.0
+
                 model.train()
 
     save_metrics(output_path + '/metric.pkl', train_loss_list, valid_loss_list, global_steps_list)
