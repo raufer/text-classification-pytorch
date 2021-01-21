@@ -17,7 +17,7 @@ def classification_report(y_true: List, y_pred: List) -> None:
     """
     Calculates and logs the classification report
     """
-    report = sk_classification_report(y_true, y_pred, labels=[1, 0], digits=4)
+    report = sk_classification_report(y_true, y_pred, digits=4)
     logger.info("Classification Report")
     logger.info(report)
 
@@ -26,19 +26,20 @@ def write_confusion_matrix(y_true: List, y_pred: List, output_path: str) -> None
     """
     Creates and writes confusion matrix plot to `output_path`
     """
-    cm = confusion_matrix(y_true, y_pred, labels=[1, 0])
+    cm = confusion_matrix(y_true, y_pred)
 
     ax = plt.subplot()
-    ax.get_legend().remove()
+
+    try:
+        ax.get_legend().remove()
+    except:
+        pass
 
     sns.heatmap(cm, annot=True, ax=ax, cmap='Blues', fmt="d")
     ax.set_title('Confusion Matrix')
 
     ax.set_xlabel('Predicted Labels')
     ax.set_ylabel('True Labels')
-
-    ax.xaxis.set_ticklabels(['reporting-buren', 'no-burden'])
-    ax.yaxis.set_ticklabels(['reporting-buren', 'no-burden'])
 
     png_path = os.path.join(output_path, 'confusion-matrix.png')
     logger.info(f"Saving Confusion Matrix Plot to '{png_path}'")
