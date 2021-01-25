@@ -144,52 +144,6 @@ def pipeline(datapath: str, modelname: str, output_dir: str) -> Tuple:
     classification_report(y_true, y_pred)
     write_confusion_matrix(y_true, y_pred, output_path)
 
-    df = pd.read_csv(datapath)
-    n_outputs = df['label'].nunique()
-
-    tokenizer = create_tokenizer(modelname)
-
-    model = make_model(modelname)(
-        dropout_rate=config['dropout-ratio'],
-        n_outputs=n_outputs
-    )
-
-    output_path = make_run_dir(output_dir)
-
-    split_ratios = [0.7, 0.2, 0.1]
-    train_dataset, val_dataset, test_dataset = create_datasets(tokenizer=tokenizer, filepath=datapath, split_ratios=split_ratios, stratify_by='class')
-
-    logger.info(f"Saving datasets to '{output_path}'")
-
-    torch.save(train_dataset, os.path.join(output_path, 'train_dataset.pt'))
-    torch.save(val_dataset, os.path.join(output_path, 'val_dataset.pt'))
-    torch.save(test_dataset, os.path.join(output_path, 'test_dataset.pt'))
-
-    train_iter, valid_iter, test_iter = make_iterators(train_dataset, val_dataset, test_dataset)
-
-    weights = calculate_multiclass_weights(df['label'])
-
-    training_job(
-        config=config,
-        model=model,
-        train_iter=train_iter,
-        valid_iter=valid_iter,
-        test_iter=test_iter,
-        output_path=output_path,
-        weights=weights
-    )
-
-    model = make_model(modelname)(
-        dropout_rate=config['dropout-ratio'],
-        n_outputs=n_outputs
-    )
-
-    model = load_model(model, output_path)
-    y_true, y_pred = evaluate(model, test_iter)
-
-    classification_report(y_true, y_pred)
-    write_confusion_matrix(y_true, y_pred, output_path)
-
     return model, y_true, y_pred, output_path, train_dataset, val_dataset, test_dataset
 
 
