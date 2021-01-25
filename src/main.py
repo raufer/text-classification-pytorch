@@ -190,7 +190,7 @@ def pipeline(datapath: str, modelname: str, output_dir: str) -> Tuple:
     classification_report(y_true, y_pred)
     write_confusion_matrix(y_true, y_pred, output_path)
 
-    return model, y_true, y_pred, output_path
+    return model, y_true, y_pred, output_path, train_dataset, val_dataset, test_dataset
 
 
 if __name__ == '__main__':
@@ -211,5 +211,6 @@ if __name__ == '__main__':
     )
 
     score = f1_score(y_true, y_pred, average='weighted')
+    logger.info(f"weighted f1-score '{score}'")
 
 
