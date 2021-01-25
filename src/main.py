@@ -31,6 +31,8 @@ from src.data.iterator import make_iterators
 from transformers import AdamW
 from transformers import get_linear_schedule_with_warmup
 
+from src.config import config
+
 from typing import Dict
 from typing import Tuple
 from typing import List
@@ -193,9 +195,6 @@ def pipeline(datapath: str, modelname: str, output_dir: str) -> Tuple:
 
 if __name__ == '__main__':
 
-    import pandas as pd
-
-    from src.config import config
     from src.arguments import args
 
     datapath = args.data_path
@@ -212,12 +211,5 @@ if __name__ == '__main__':
     )
 
     score = f1_score(y_true, y_pred, average='weighted')
-
-
-
-
-
-
-
 
 
