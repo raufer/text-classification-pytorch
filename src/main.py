@@ -19,6 +19,9 @@ from sklearn.metrics import f1_score
 from src.processes.pretrain import pretrain
 from src.processes.train import train
 
+from src.models import make_model
+from src.tokenizer import create_tokenizer
+
 from src.utils.directories import make_run_dir
 from src.viz.metrics import write_train_valid_loss
 
@@ -194,9 +197,6 @@ if __name__ == '__main__':
 
     from src.config import config
     from src.arguments import args
-
-    from src.models import make_model
-    from src.tokenizer import create_tokenizer
 
     datapath = args.data_path
     output_dir = args.output_dir
