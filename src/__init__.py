@@ -39,3 +39,7 @@ if torch.cuda.is_available():
     torch.backends.cudnn.benchmark = False
 else:
     device = torch.device('cpu')
+
+logger = logging.getLogger(__name__)
+
+logger.info(f"Device detected '{device}'")
