@@ -3,7 +3,7 @@ import torch
 from transformers import RobertaModel
 
 
-class RobertaClassifier(torch.nn.Module):
+class RobertaPooledClassifier(torch.nn.Module):
 
     """
     During training the output of RoBERTa is a batch of hidden states, which is passed to classifier layers
@@ -13,7 +13,7 @@ class RobertaClassifier(torch.nn.Module):
     """
 
     def __init__(self, dropout_rate=0.3, n_outputs=2):
-        super(RobertaClassifier, self).__init__()
+        super(RobertaPooledClassifier, self).__init__()
 
         self.pretrained_model = RobertaModel.from_pretrained('roberta-base')
         self.d1 = torch.nn.Dropout(dropout_rate)
@@ -23,11 +23,7 @@ class RobertaClassifier(torch.nn.Module):
         self.l2 = torch.nn.Linear(64, n_outputs)
 
     def forward(self, *args, **kwargs):
-        hidden_states, _ = self.pretrained_model(*args, **kwargs)
-        # here I use only representation of <s> token, but we can easily use more tokens,
-        # custom pooling, etc
-        # x = self.d1(hidden_states[:, 0, :])
-        x = self.d1(hidden_states.mean(dim=1))
+        _, x = self.pretrained_model(*args, **kwargs)
         x = self.d1(x)
         x = self.l1(x)
         x = self.bn1(x)

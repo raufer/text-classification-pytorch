@@ -10,8 +10,10 @@ MODELS = [
 
 
 class MODEL_NAME:
+    ROBERTA_POOLED = 'roberta-pooled'
     ROBERTA = 'roberta'
     ELECTRA = 'electra'
     LEGALBERT = 'legalbert'
+    XLNET = 'xlnet'
 
 

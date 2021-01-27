@@ -94,10 +94,13 @@ def training_job(config: Dict, model: torch.nn.Module, train_iter: DataLoader, v
     return output_path
 
 
-def pipeline(datapath: str, modelname: str, output_dir: str) -> Tuple:
+def pipeline(datapath: str, modelname: str, output_dir: str, stratify_by='class') -> Tuple:
     """
     Main function that orchestrates the training workflow
     """
+    logger.info(f"Main pipeline")
+    logger.info(f"Stratifying pipeline by '{stratify_by}'")
+
     df = pd.read_csv(datapath)
     n_outputs = df['label'].nunique()
 
@@ -111,7 +114,7 @@ def pipeline(datapath: str, modelname: str, output_dir: str) -> Tuple:
     output_path = make_run_dir(output_dir)
 
     split_ratios = [0.8, 0.1, 0.1]
-    train_dataset, val_dataset, test_dataset = create_datasets(tokenizer=tokenizer, filepath=datapath, split_ratios=split_ratios, stratify_by='class')
+    train_dataset, val_dataset, test_dataset = create_datasets(tokenizer=tokenizer, filepath=datapath, split_ratios=split_ratios, stratify_by=stratify_by)
 
     logger.info(f"Saving datasets to '{output_path}'")
 
@@ -134,7 +137,6 @@ def pipeline(datapath: str, modelname: str, output_dir: str) -> Tuple:
     )
 
     model = make_model(modelname)(
-        dropout_rate=config['dropout-ratio'],
         n_outputs=n_outputs
     )
 
