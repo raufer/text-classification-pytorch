@@ -5,7 +5,9 @@ BATCH_SIZE = 16
 MODELS = [
     'roberta',
     'electra',
-    'legalbert'
+    'legalbert',
+    'xlnet',
+    'roberta-pooled'
 ]
 
 
