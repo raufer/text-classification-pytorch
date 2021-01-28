@@ -28,11 +28,9 @@ class RobertaClassifier(torch.nn.Module):
         # custom pooling, etc
         # x = self.d1(hidden_states[:, 0, :])
         x = self.d1(hidden_states.mean(dim=1))
-        x = self.d1(x)
         x = self.l1(x)
         x = self.bn1(x)
         x = torch.nn.Tanh()(x)
         x = self.d2(x)
         x = self.l2(x)
-
         return x
