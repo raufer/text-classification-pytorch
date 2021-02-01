@@ -37,3 +37,35 @@ def evaluate(model, test_iter: DataLoader) -> Tuple[List, List]:
     return y_true, y_pred
 
 
+def evaluate_probs(model, test_iter: DataLoader) -> Tuple[List, List]:
+    """
+    Given a model and a test iterator
+    returns the model prediction and the true labels
+
+    Returns the normalized probablitities
+
+    y_pred :: (test_iter.shape[0])
+    y_true :: (test_iter.shape[0])
+    """
+    y_pred = []
+    y_true = []
+    y_probs = []
+
+    model.eval()
+    sm = torch.nn.Softmax(dim=1)
+
+    with torch.no_grad():
+
+        for batch in test_iter:
+
+            batch = {k: v.to(device) for k, v in batch.items()}
+
+            target = batch.pop('target')
+
+            output = model(**batch)
+
+            y_pred.extend(torch.argmax(output, axis=-1).tolist())
+            y_true.extend(target.tolist())
+            y_probs.extend(sm(output).tolist())
+
+    return y_true, y_pred, y_probs
