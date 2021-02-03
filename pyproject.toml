@@ -11,9 +11,10 @@ matplotlib = "^3.3.3"
 seaborn = "^0.11.0"
 pytest = "^6.1.2"
 torch = "1.7.0"
-transformers = "^4.0.0"
+transformers = "3"
 scikit-learn = "^0.23.2"
 torchtext = "0.8"
+networkx = "1.11"
 
 [tool.poetry.dev-dependencies]
 
