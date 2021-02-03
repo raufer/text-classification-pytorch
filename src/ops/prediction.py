@@ -29,7 +29,11 @@ def predict(model, iterator: DataLoader) -> Tuple[List, List]:
     sm = torch.nn.Softmax(dim=1)
 
     with torch.no_grad():
-        for batch in iterator:
+
+        for i, batch in enumerate(iterator):
+
+            logger.info(f"Batch '{i}/{len(iterator)}'")
+
             batch = {k: v.to(device) for k, v in batch.items()}
 
             output = model(**batch)
@@ -47,29 +51,14 @@ def predict_texts(model, tokenizer, texts: List[str]) -> Tuple[List[int], List[T
     * List with the index of the predicted class
     * List with the normalized of all classes (normalized)
     """
-    acc_y_preds = []
-    acc_y_probs = []
+    logger.info(f"Creating a iterator with batch size '{BATCH_SIZE}'")
+    dataset = SimpleTextDataset(texts, tokenizer)
+    iterator = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
 
-    inference_batch_size = 20000
+    logger.info(f"Number of batches '{len(iterator)}'")
 
-    n = (len(texts) // inference_batch_size) + 1
+    y_pred, y_probs = predict(model, iterator)
 
-    for i in range(n):
-        a = i * inference_batch_size
-        b = (i + 1) * inference_batch_size
-
-        logger.info(f"Inference batch: '{a}' to '{b}'. Batch '{i}/{n}'")
-
-        working_texts = texts[a:b]
-
-        dataset = SimpleTextDataset(working_texts, tokenizer)
-        iterator = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
-
-        y_pred, y_probs = predict(model, iterator)
-
-        acc_y_preds.extend(y_pred)
-        acc_y_probs.extend(y_probs)
-
-    return acc_y_preds, acc_y_probs
+    return y_pred, y_probs
 
 

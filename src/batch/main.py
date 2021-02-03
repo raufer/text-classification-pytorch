@@ -45,18 +45,20 @@ def pipeline(input_dir: str, output_dir: str, model_dir: str, n_outputs: int):
 
 if __name__ == '__main__':
 
-    from src.arguments import args
+    from src.batch.arguments import args
 
     input_dir = args.input_dir
     output_dir = args.output_dir
     model_dir = args.model_dir
-    n_outputs = args.n_outpurs
+    n_outputs = args.n_outputs
 
     for arg, value in sorted(vars(args).items()):
         logging.info(f"Argument {arg}: '{value}'")
 
     # input_dir = '/Users/raulferreira/waymark/data/prepared/enacted-epublished-xml'
     # output_dir = '/Users/raulferreira/waymark/data/nlp-outputs/regulatory-burden'
+    # model_dir = ''
+    # n_outputs = 4
 
     pipeline(
         input_dir=input_dir,
