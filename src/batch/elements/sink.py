@@ -19,14 +19,12 @@ logger = logging.getLogger(__name__)
 Item = Tuple[str, Dict, nx.DiGraph]
 
 
-def write_object(output_dir: str, file: str, doc: Dict, data_obj: Dict) -> None:
+def write_object(output_dir: str, file: str, identifier: str, data_obj: Dict) -> None:
     """
     Writes a single Document level Themes Object
     """
-    id_ = doc['metadata']['identifier']
-
     data = {
-        'identifier': id_,
+        'identifier': identifier,
         'data': data_obj
     }
 

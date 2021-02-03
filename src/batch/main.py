@@ -4,8 +4,11 @@ from itertools import islice
 from itertools import repeat
 from collections import defaultdict
 
+from src.batch.elements.sink import write_object
 from src.batch.elements.source import traverse_documents
-from src.batch.elements.transform import process_single, run_inference
+from src.batch.elements.transform import run_inference
+from src.batch.elements.transform import process_single
+from src.batch.ops.burden import document_burden_view
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +19,19 @@ def pipeline(input_dir: str, output_dir: str, model_dir: str, n_outputs: int):
     logger.info(f"Input dir '{input_dir}'")
     logger.info(f"Output dir '{output_dir}'")
     logger.info(f"Model dir '{model_dir}'")
+
+    idx_to_labels = {
+        0: 'Lower Order Detail',
+        1: 'No Burden',
+        2: 'Reporting',
+        3: 'Standards'
+    }
+    bridges = ['Lower Order Detail']
+    ignore = ['No Burden', 'Lower Order Detail']
+
+    logger.info(f"Labels object '{idx_to_labels}'")
+    logger.info(f"Labels to act as a brifge '{bridges}'")
+    logger.info(f"Labels to ignore as burden initiators '{ignore}'")
 
     stream = traverse_documents(input_dir)
     stream = list((islice(stream, 10)))
@@ -39,11 +55,33 @@ def pipeline(input_dir: str, output_dir: str, model_dir: str, n_outputs: int):
     with open('y_probs.pkl', 'rb') as f:
         y_probs = pickle.load(f)
 
-    documents = defaultdict(lambda : {'articles': []})
+    data = (
+        (file, url, article_id, block_id, text, pred, probs)
+        for (file, url, article_id, block_id, text), pred, probs in zip(data, y_pred, y_probs)
+    )
 
-    for i in data:
-        print(i)
-    raise ValueError
+    documents = defaultdict(lambda: dict())
+
+    for file, url, article_id, block_id, text, pred, probs in data:
+        documents[url]['file'] = file
+        if 'articles' not in documents[url]:
+            documents[url]['articles'] = []
+        documents[url]['articles'].append((article_id, block_id, text, pred, probs))
+
+    logger.info(f"'{len(documents)}' documents in scope to create Burden View")
+
+    logger.info(f"Resolving burden instances at the document level")
+
+    for i, (url, d) in enumerate(documents.items()):
+        d['burden-instances'] = document_burden_view(d['articles'], idx_to_labels, bridges, ignore)
+
+    n_written = 0
+    for url, d in documents.items():
+        if d['burden-instances']:
+            n_written += 1
+            write_object(output_dir, d['file'], url, d['burden-instances'])
+
+    logger.info(f"Written '{n_written}' documents")
 
     return stream
 
