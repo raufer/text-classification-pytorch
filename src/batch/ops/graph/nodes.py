@@ -4,9 +4,9 @@ from typing import Dict
 from typing import List
 from typing import Tuple
 
-from src.ops.graph.remove import irrelevant_block
-from src.ops.graph.remove import remove_schedules
-from src.ops.graph.remove import remove_irrelevant_nodes
+from src.batch.ops.graph.remove import irrelevant_block
+from src.batch.ops.graph.remove import remove_schedules
+from src.batch.ops.graph.remove import remove_irrelevant_nodes
 
 
 def text_blocks(g: nx.DiGraph) -> List[str]:

@@ -4,7 +4,7 @@ import networkx as nx
 from typing import Callable
 from typing import Dict
 
-from src.ops.functions import arguments_name
+from src.batch.ops.functions import arguments_name
 
 
 def map_nodes(graph: nx.DiGraph, f: Callable[..., Dict]) -> nx.DiGraph:
