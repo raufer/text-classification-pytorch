@@ -49,6 +49,8 @@ if __name__ == '__main__':
 
     input_dir = args.input_dir
     output_dir = args.output_dir
+    model_dir = args.model_dir
+    n_outputs = args.n_outpurs
 
     for arg, value in sorted(vars(args).items()):
         logging.info(f"Argument {arg}: '{value}'")
@@ -58,5 +60,6 @@ if __name__ == '__main__':
 
     pipeline(
         input_dir=input_dir,
-        output_dir=output_dir
+        output_dir=output_dir,
+        model_dir=
     )
