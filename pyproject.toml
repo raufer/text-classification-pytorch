@@ -15,6 +15,7 @@ transformers = "3"
 scikit-learn = "^0.23.2"
 torchtext = "0.8"
 networkx = "1.11"
+dictdiffer = "^0.8.1"
 
 [tool.poetry.dev-dependencies]
 

@@ -2,6 +2,7 @@ import os
 import logging
 from itertools import islice
 from itertools import repeat
+from collections import defaultdict
 
 from src.batch.elements.source import traverse_documents
 from src.batch.elements.transform import process_single, run_inference
@@ -17,7 +18,7 @@ def pipeline(input_dir: str, output_dir: str, model_dir: str, n_outputs: int):
     logger.info(f"Model dir '{model_dir}'")
 
     stream = traverse_documents(input_dir)
-    stream = list(islice(stream, 10))[:]
+    stream = list((islice(stream, 10)))
 
     stream = (xs + (process_single(*xs),) for xs in stream)
 
@@ -28,16 +29,20 @@ def pipeline(input_dir: str, output_dir: str, model_dir: str, n_outputs: int):
 
     texts = [os.linesep.join(x[-1]) + os.linesep for x in data]
 
-    y_pred, y_probs = run_inference(texts, model_dir, n_outputs)
+    # y_pred, y_probs = run_inference(texts, model_dir, n_outputs)
 
     import pickle
 
-    with open('y_pred.pkl', 'wb') as f:
-        pickle.dump(y_pred, f)
+    with open('y_pred.pkl', 'rb') as f:
+        y_pred = pickle.load(f)
 
-    with open('y_probs.pkl', 'wb') as f:
-        pickle.dump(y_probs, f)
+    with open('y_probs.pkl', 'rb') as f:
+        y_probs = pickle.load(f)
 
+    documents = defaultdict(lambda : {'articles': []})
+
+    for i in data:
+        print(i)
     raise ValueError
 
     return stream
