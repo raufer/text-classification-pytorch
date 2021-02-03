@@ -1,3 +1,4 @@
+import logging
 import networkx as nx
 
 from itertools import repeat
@@ -13,6 +14,9 @@ from src.io.model import load_model
 from src.models import make_model
 from src.ops.prediction import predict_texts
 from src.tokenizer import create_tokenizer
+
+
+logger = logging.getLogger(__name__)
 
 
 def process_single(file: str, doc: Dict, g: nx.DiGraph):
@@ -49,6 +53,8 @@ def run_inference(texts: List[str], model_dir: str, n_outputs: int):
     """
     Runs an inference job using the model in `model_dir`
     """
+    logger.info(f"Running an inference job to infer '{len(texts)}' documents")
+
     modelname = MODEL_NAME.ROBERTA_POOLED
 
     tokenizer = create_tokenizer(modelname)
