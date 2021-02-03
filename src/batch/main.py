@@ -61,5 +61,6 @@ if __name__ == '__main__':
     pipeline(
         input_dir=input_dir,
         output_dir=output_dir,
-        model_dir=
+        model_dir=model_dir,
+        n_outputs=n_outputs
     )
