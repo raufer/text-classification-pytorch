@@ -76,12 +76,14 @@ def pipeline(input_dir: str, output_dir: str, model_dir: str, n_outputs: int):
         d['burden-instances'] = document_burden_view(d['articles'], idx_to_labels, bridges, ignore)
 
     n_written = 0
+
     for url, d in documents.items():
         if d['burden-instances']:
             n_written += 1
             write_object(output_dir, d['file'], url, d['burden-instances'])
 
     logger.info(f"Written '{n_written}' documents")
+    logger.info(f"'{len(documents) - n_written}' documents without any burden instance")
 
     return stream
 
